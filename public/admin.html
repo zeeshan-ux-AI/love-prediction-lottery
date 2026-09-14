@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - LoveLottery DB Entries</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app-container" style="max-width: 850px;">
+    <h1 class="app-title">📊 LoveLottery Admin Dashboard</h1>
+    <p class="app-subtitle">লটারিতে অংশগ্রহণকারী সব ইউজারদের নামের ডাটাবেজ তালিকা</p>
+
+    <!-- Admin Password Prompt -->
+    <div id="authBox" style="margin: 20px 0;">
+      <div class="form-group">
+        <label class="form-label" for="adminKey">এডমিন পাসওয়ার্ড দিন (Admin Secret Key):</label>
+        <input type="password" id="adminKey" class="input-field" placeholder="পাসওয়ার্ড লিখুন..." value="admin123">
+      </div>
+      <button id="loadBtn" class="btn-spin" style="margin-top: 10px;">ডাটাবেজ এন্ট্রিগুলো দেখুন (Fetch DB Records)</button>
+    </div>
+
+    <!-- Data Summary Stats -->
+    <div id="statsRow" style="display: none; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin: 25px 0;">
+      <div style="background: rgba(255,255,255,0.04); padding: 15px; border-radius: 14px; border: 1px solid rgba(255,0,127,0.2);">
+        <h3 id="totalCount" style="color: var(--pink-neon); font-size: 1.8rem;">0</h3>
+        <p style="font-size: 0.85rem; color: #94a3b8;">সর্বমোট লটারি স্পিন</p>
+      </div>
+      <div style="background: rgba(255,255,255,0.04); padding: 15px; border-radius: 14px; border: 1px solid rgba(0,242,254,0.2);">
+        <h3 id="avgScore" style="color: var(--cyan-neon); font-size: 1.8rem;">0%</h3>
+        <p style="font-size: 0.85rem; color: #94a3b8;">গড় লভ স্কোর</p>
+      </div>
+    </div>
+
+    <!-- DB Records Table -->
+    <div id="dataContainer" style="display: none;">
+      <div class="admin-table-wrapper">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>#ID</th>
+              <th>ইউজারের নাম</th>
+              <th>ক্রাশ/লাভারে নাম</th>
+              <th>সম্পর্ক</th>
+              <th>স্কোর</th>
+              <th>লটারি রেজাল্ট</th>
+              <th>তারিখ ও সময়</th>
+            </tr>
+          </thead>
+          <tbody id="dbTbody">
+            <!-- Data Rows inserted via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('loadBtn').addEventListener('click', fetchDatabaseEntries);
+
+    function fetchDatabaseEntries() {
+      const secret = document.getElementById('adminKey').value.trim();
+      if (!secret) {
+        alert('পাসওয়ার্ড দিন!');
+        return;
+      }
+
+      fetch(`/api/admin/entries?secret=${encodeURIComponent(secret)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            alert('ভুল পাসওয়ার্ড! ' + data.error);
+            return;
+          }
+
+          document.getElementById('statsRow').style.display = 'grid';
+          document.getElementById('dataContainer').style.display = 'block';
+
+          const entries = data.entries || [];
+          document.getElementById('totalCount').innerText = entries.length;
+
+          let sum = 0;
+          const tbody = document.getElementById('dbTbody');
+          tbody.innerHTML = '';
+
+          if (entries.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#94a3b8;">এখনও কোনো ডাটাবেজ এন্ট্রি জমা হয়নি!</td></tr>';
+            document.getElementById('avgScore').innerText = '0%';
+            return;
+          }
+
+          entries.forEach((item, i) => {
+            sum += item.compatibility_score || 0;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${item.id || i+1}</td>
+              <td style="font-weight:600; color:#fff;">${escapeHtml(item.user_name)}</td>
+              <td style="color:var(--pink-neon); font-weight:600;">❤️ ${escapeHtml(item.lover_name)}</td>
+              <td>${escapeHtml(item.relation_type || 'Crush')}</td>
+              <td><span style="color:var(--gold-neon); font-weight:700;">${item.compatibility_score}%</span></td>
+              <td style="font-size:0.85rem; color:#cbd5e1;">${escapeHtml(item.verdict || '')}</td>
+              <td style="font-size:0.8rem; color:#94a3b8;">${item.created_at || 'Just now'}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+
+          const avg = Math.round(sum / entries.length);
+          document.getElementById('avgScore').innerText = `${avg}%`;
+        })
+        .catch(err => {
+          alert('ডাটা লোড করতে সমস্যা হয়েছে বা সার্ভার লোকাল মোডে আছে।');
+          console.error(err);
+        });
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+  </script>
+</body>
+</html>

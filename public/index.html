@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LoveLottery - প্রেমে পড়ার লটারি চাকা 💘</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Floating Marquee Activity Ticker -->
+  <div class="ticker-bar">
+    <div class="ticker-content" id="tickerText">
+      🔥 রাহাত & রিয়া 99% Soulmate!   •   😍 সাকিব got: Moner Manush 💘 with তিশা!   •   💖 ফাহিম & নাবিলা 100% True Love!
+    </div>
+  </div>
+
+  <div class="app-container">
+    <div class="header-tools">
+      <span style="font-size: 0.8rem; color: var(--gold-neon); font-weight: 700;">✨ LIVE LOVE LOTTERY v2.0</span>
+      <button class="btn-tool" onclick="alert('স্পিন করার শব্দ শুনতে স্পিন বাটনে ক্লিক করুন!')">🔊 Sound ON</button>
+    </div>
+
+    <h1 class="app-title">💘 LoveLottery Wheel</h1>
+    <p class="app-subtitle">আপনার ও আপনার ক্রাশের নাম লিখে চাকা ঘুড়িয়ে জেনে নিন মনের খবর!</p>
+
+    <!-- User Input Form -->
+    <div class="form-group">
+      <label class="form-label" for="userName">আপনার নাম (Your Name):</label>
+      <input type="text" id="userName" class="input-field" placeholder="যেমন: রাহাত" required>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="loverName">যার সাথে লটারি করতে চান (Lover/Crush):</label>
+      <input type="text" id="loverName" class="input-field" placeholder="যেমন: রিয়া" required>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="relationType">সম্পর্কের ধরন (Relationship Status):</label>
+      <select id="relationType" class="select-field">
+        <option value="Crush">গোপন ক্রাশ (Crush 🙈)</option>
+        <option value="Partner">প্রেমিক / প্রেমিকা (Partner 💑)</option>
+        <option value="BestFriend">প্রিয় বন্ধু (Best Friend 💖)</option>
+        <option value="Ex">প্রাক্তন (Ex 💔)</option>
+      </select>
+    </div>
+
+    <!-- Canvas Lottery Wheel -->
+    <div class="wheel-wrapper">
+      <div class="wheel-pointer"></div>
+      <canvas id="wheelCanvas" width="280" height="280"></canvas>
+    </div>
+
+    <!-- Spin Action Button -->
+    <button id="spinBtn" class="btn-spin">🎰 লটারি চাকা ঘোরান (Spin Lottery)</button>
+  </div>
+
+  <!-- Result Modal Popup -->
+  <div id="resultModal" class="modal-overlay">
+    <div class="modal-card">
+      <h2 id="modalNames" style="color: var(--pink-neon); font-size: 1.5rem;">রাহাত ❤️ রিয়া</h2>
+      <div id="modalScore" class="score-badge">98%</div>
+      <div id="modalVerdict" class="verdict-title">১০০% ট্রু লাভ! 🔥</div>
+      <div id="modalPrediction" class="prediction-box">
+        লটারি অনুযায়ী রিয়া আপনার কথা সারাদিন চিন্তা করে! প্রেমে পড়ার চান্স ৯৯%। 💖
+      </div>
+
+      <!-- Share Row -->
+      <div class="share-btn-row">
+        <a id="whatsappShareBtn" href="#" target="_blank" class="btn-whatsapp">📲 WhatsApp-এ শেয়ার করুন</a>
+      </div>
+
+      <button id="closeModalBtn" class="btn-close">আবার ট্রাই করুন (Spin Again)</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
